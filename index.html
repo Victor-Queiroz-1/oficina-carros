@@ -1,138 +1,198 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Oficina Mecânica · 5 Cartões de Visita Digitais</title>
-<meta name="description" content="5 variações de cartão de visita digital (bio link) para oficina mecânica — glassmorphism, otimizados para conversão de agendamento.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
-<style>
-  :root{
-    --orange:#FF6B1A; --orange-soft:#FFA94D;
-    --ink:#0E1419; --text:#F4F6F8; --text-dim:#A6B0BB;
-    --glass-bg:rgba(27,36,44,.55); --glass-brd:rgba(255,107,26,.32);
-    --radius:24px; --ease:cubic-bezier(.22,1,.36,1);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{min-height:100%}
-  body{
-    font-family:'Inter',system-ui,sans-serif;color:var(--text);
-    min-height:100dvh;display:flex;align-items:center;justify-content:center;
-    padding:calc(env(safe-area-inset-top) + 28px) 16px calc(env(safe-area-inset-bottom) + 28px);
-    position:relative;overflow-x:hidden;background:#0E1419;
-  }
-  .bg,.bg__img,.bg__ov{position:fixed;inset:0;z-index:-2}
-  .bg{background:radial-gradient(circle at 50% 0%,rgba(255,107,26,.16),transparent 55%),linear-gradient(180deg,#0E1419 0%,#161d24 60%,#0a0d10 100%);background-color:#0E1419}
-  .bg__img{z-index:-1;background-size:cover;background-position:center;filter:saturate(95%);opacity:0;transition:opacity 1.2s ease}
-  .bg__img.is-loaded{opacity:.32}
-  .bg__ov{z-index:-1;background:linear-gradient(180deg,rgba(14,20,25,.55) 0%,rgba(14,20,25,.74) 100%)}
-  .wrap{width:min(94vw,860px);max-width:860px}
-  header.top{text-align:center;margin-bottom:26px}
-  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange-soft);font-weight:500;margin-bottom:14px}
-  .kicker i{font-size:.7rem}
-  h1{font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;font-size:clamp(1.9rem,5.5vw,2.8rem);line-height:1.08;letter-spacing:.01em}
-  h1 em{font-style:normal;color:var(--orange)}
-  p.sub{margin:14px auto 0;max-width:46ch;color:var(--text-dim);font-size:.96rem;line-height:1.55}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px}
-  a.card{display:block;text-decoration:none;color:inherit;border-radius:var(--radius);padding:20px 20px 18px;
-    background:var(--glass-bg);-webkit-backdrop-filter:blur(16px) saturate(125%);backdrop-filter:blur(16px) saturate(125%);
-    border:1px solid var(--glass-brd);
-    box-shadow:0 18px 44px -20px rgba(0,0,0,.6),0 1px 0 0 rgba(255,255,255,.06) inset;
-    position:relative;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease);
-    animation:fadeUp .7s var(--ease) both}
-  a.card:hover{transform:translateY(-4px);box-shadow:0 26px 54px -20px rgba(0,0,0,.7),0 1px 0 0 rgba(255,255,255,.08) inset;border-color:rgba(255,107,26,.65)}
-  a.card:active{transform:translateY(-1px) scale(.99)}
-  a.card[data-d="1"]{animation-delay:.05s}a.card[data-d="2"]{animation-delay:.12s}
-  a.card[data-d="3"]{animation-delay:.19s}a.card[data-d="4"]{animation-delay:.26s}
-  a.card[data-d="5"]{animation-delay:.33s}
-  .swatch{width:100%;height:54px;border-radius:14px;margin-bottom:14px;box-shadow:0 6px 16px -8px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06) inset}
-  .num{position:absolute;top:14px;right:16px;font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--text-dim);opacity:.7;letter-spacing:.05em}
-  .card h3{font-family:'Oswald',sans-serif;font-weight:500;font-size:1.16rem;line-height:1.2;margin-bottom:4px;letter-spacing:.01em}
-  .card .role{font-size:.78rem;color:var(--text-dim);margin-bottom:12px;letter-spacing:.01em}
-  .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-  .meta span{font-size:.66rem;letter-spacing:.04em;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);color:var(--text-dim)}
-  .go{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:500;color:var(--orange-soft)}
-  .go i{transition:transform .3s var(--ease)}
-  a.card:hover .go i{transform:translateX(4px)}
-  footer.foot{text-align:center;margin-top:30px;color:var(--text-dim);font-size:.78rem;line-height:1.6}
-  footer.foot a{color:var(--orange-soft);text-decoration:none}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0E1419" />
+  <meta name="description" content="5 variações de cartão de visita digital (bio link) para oficina mecânica — glassmorphism, otimizados para conversão de agendamento." />
+  <title>Oficina Mecânica · 5 Cartões de Visita Digitais</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <style>
+    :root {
+      --bg1:#0E1419; --bg2:#161d24; --bg3:#0a0d10;
+      --accent:#FF6B1A; --accent2:#FFA94D;
+      --text:#F4F6F8; --muted:#A6B0BB;
+      --glass-bg:rgba(27,36,44,.62); --glass-brd:rgba(255,107,26,.32);
+      --radius:26px; --ease:cubic-bezier(0.22,1,0.36,1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+    body {
+      font-family:'Inter',system-ui,sans-serif; color:var(--text);
+      min-height:100dvh; display:flex; align-items:center; justify-content:center;
+      padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 28px);
+      position:relative; overflow-x:hidden; background:var(--bg1);
+    }
+    /* Background em 3 camadas */
+    .bg, .bg__img, .bg__overlay { position:fixed; inset:0; }
+    .bg { z-index:-2; background-color:var(--bg1);
+      background-image:radial-gradient(circle at 50% 0%,rgba(255,107,26,.18),transparent 55%),
+        linear-gradient(180deg,#161d24 0%,#0E1419 60%,#0a0d10 100%); }
+    .bg__img { z-index:-1; background-size:cover; background-position:center;
+      filter:saturate(95%) blur(2px); opacity:0; transition:opacity 1.2s ease; }
+    .bg__img.is-loaded { opacity:.32; }
+    .bg__overlay { z-index:-1; pointer-events:none;
+      background:linear-gradient(180deg,rgba(14,20,25,.55) 0%,rgba(14,20,25,.74) 100%); }
+
+    /* Glass card */
+    .card {
+      width:min(94vw,460px); padding:26px 22px 22px; border-radius:var(--radius);
+      background:var(--glass-bg);
+      -webkit-backdrop-filter:blur(18px) saturate(125%); backdrop-filter:blur(18px) saturate(125%);
+      border:1px solid var(--glass-brd);
+      box-shadow:0 28px 70px -20px rgba(0,0,0,.6),
+        0 2px 0 0 rgba(255,255,255,.06) inset, 0 -2px 24px -10px rgba(255,107,26,.16) inset;
+      position:relative;
+    }
+    .card::before { content:""; position:absolute; top:0; left:18%; right:18%; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,107,26,.7),transparent); opacity:.8; }
+
+    /* Header */
+    .head { text-align:center; margin-bottom:22px; }
+    .head__emoji { font-size:2.4rem; line-height:1; filter:drop-shadow(0 6px 14px rgba(255,107,26,.5)); }
+    .head__title { font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
+      font-size:2.2rem; letter-spacing:.5px; margin-top:8px;
+      background:linear-gradient(90deg,var(--accent2),var(--accent));
+      -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .head__sub { color:var(--muted); font-size:.92rem; margin-top:6px; font-weight:500; }
+    .head__count { display:inline-flex; align-items:center; gap:6px; margin-top:12px;
+      padding:5px 12px; border-radius:999px; font-size:.74rem; font-weight:600; letter-spacing:.4px;
+      background:rgba(255,107,26,.14); color:var(--accent2); border:1px solid rgba(255,107,26,.28); }
+
+    /* Tiles */
+    .tiles { display:flex; flex-direction:column; gap:11px; }
+    .tile {
+      display:flex; align-items:center; gap:13px; text-decoration:none; color:var(--text);
+      padding:13px 14px; border-radius:16px; position:relative; overflow:hidden;
+      background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.09);
+      transition:transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    }
+    .tile:hover { transform:translateY(-2px); background:rgba(255,255,255,.08); }
+    .tile:active { transform:scale(.985); }
+    .tile__bar { width:4px; align-self:stretch; border-radius:4px; flex-shrink:0; }
+    .tile__num { font-family:'Oswald',sans-serif; font-weight:500; font-size:1.1rem; line-height:1;
+      color:var(--muted); width:30px; text-align:center; flex-shrink:0; }
+    .tile__body { flex:1; min-width:0; }
+    .tile__name { font-family:'Oswald',sans-serif; font-weight:500; font-size:1.02rem; line-height:1.2; letter-spacing:.01em; }
+    .tile__concept { font-size:.78rem; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:7px; }
+    .tone { font-size:.62rem; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; }
+    .tone--dark { background:rgba(0,0,0,.4); color:#F4F6F8; border:1px solid rgba(255,255,255,.18); }
+    .tone--light { background:rgba(255,255,255,.85); color:#1C1714; }
+    .tile__arrow { color:var(--muted); font-size:.85rem; flex-shrink:0; transition:transform .25s var(--ease), color .25s; }
+    .tile:hover .tile__arrow { transform:translateX(3px); color:var(--accent2); }
+
+    /* Footer */
+    .foot { text-align:center; margin-top:20px; padding-top:16px;
+      border-top:1px solid rgba(255,255,255,.09); }
+    .foot__hint { font-size:.78rem; color:var(--muted); line-height:1.6; }
+    .foot__hint b { color:var(--text); }
+    .foot__repo { display:inline-flex; align-items:center; gap:7px; margin-top:10px;
+      font-size:.76rem; font-weight:600; color:var(--accent2); text-decoration:none;
+      padding:8px 14px; border-radius:10px; background:rgba(255,107,26,.1); border:1px solid rgba(255,107,26,.25); }
+    .foot__repo:hover { background:rgba(255,107,26,.18); }
+
+    /* Reveal */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    .reveal { opacity:0; animation:fadeUp .7s var(--ease) forwards; }
+    .reveal[data-d="1"] { animation-delay:.05s; }
+    .reveal[data-d="2"] { animation-delay:.13s; }
+    .reveal[data-d="3"] { animation-delay:.21s; }
+    .reveal[data-d="4"] { animation-delay:.29s; }
+    .reveal[data-d="5"] { animation-delay:.37s; }
+    .reveal[data-d="6"] { animation-delay:.45s; }
+    .reveal[data-d="7"] { animation-delay:.53s; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { animation:none; opacity:1; }
+      *,*::before,*::after { transition:none !important; }
+    }
+  </style>
 </head>
 <body>
   <div class="bg"></div>
   <div class="bg__img" id="bgImg"></div>
-  <div class="bg__ov"></div>
+  <div class="bg__overlay"></div>
 
-  <div class="wrap">
-    <header class="top">
-      <span class="kicker"><i class="fa-solid fa-screwdriver-wrench"></i> Cartões de Visita Digitais · Oficina Mecânica</span>
-      <h1>5 variações de <em>bio link</em> para oficina</h1>
-      <p class="sub">Cinco identidades visuais com glassmorphism, mesma estrutura de conversão otimizada para <strong>agendamento</strong>. Toque em um card para abrir.</p>
+  <main class="card reveal" data-d="1">
+    <header class="head reveal" data-d="2">
+      <div class="head__emoji">🔧</div>
+      <h1 class="head__title">Oficina Mecânica</h1>
+      <p class="head__sub">Cartão de visita digital · escolha um modelo</p>
+      <span class="head__count"><i class="fa-solid fa-layer-group"></i> 5 modelos disponíveis</span>
     </header>
 
-    <div class="grid">
-      <a class="card" data-d="1" href="index-01.html">
-        <span class="num">01</span>
-        <div class="swatch" style="background:linear-gradient(135deg,#0E1419 0%,#FF6B1A 100%)"></div>
-        <h3>ForçaAuto Oficina</h3>
-        <div class="role">Completa · Revisão &amp; Diagnóstico</div>
-        <div class="meta"><span>Gunmetal + Laranja</span><span>Oswald</span><span>Vidro escuro</span></div>
-        <span class="go">Abrir cartão <i class="fa-solid fa-arrow-right"></i></span>
+    <nav class="tiles">
+      <a class="tile reveal" data-d="3" href="index-01.html">
+        <span class="tile__bar" style="background:#FF6B1A"></span>
+        <span class="tile__num">01</span>
+        <span class="tile__body">
+          <span class="tile__name">ForçaAuto Oficina</span>
+          <span class="tile__concept">Completa · Revisão &amp; Diagnóstico <span class="tone tone--dark">DARK</span></span>
+        </span>
+        <i class="fa-solid fa-arrow-right tile__arrow"></i>
       </a>
 
-      <a class="card" data-d="2" href="index-02.html">
-        <span class="num">02</span>
-        <div class="swatch" style="background:linear-gradient(135deg,#0B2A6B 0%,#9bb9ff 100%)"></div>
-        <h3>Oficina do Zé</h3>
-        <div class="role">Bairro · Tradição e confiança</div>
-        <div class="meta"><span>Azul-marinho + Branco</span><span>Barlow</span><span>Vidro claro</span></div>
-        <span class="go">Abrir cartão <i class="fa-solid fa-arrow-right"></i></span>
+      <a class="tile reveal" data-d="4" href="index-02.html">
+        <span class="tile__bar" style="background:#9bb9ff"></span>
+        <span class="tile__num">02</span>
+        <span class="tile__body">
+          <span class="tile__name">Oficina do Zé</span>
+          <span class="tile__concept">Bairro · Tradição e confiança <span class="tone tone--light">LIGHT</span></span>
+        </span>
+        <i class="fa-solid fa-arrow-right tile__arrow"></i>
       </a>
 
-      <a class="card" data-d="3" href="index-03.html">
-        <span class="num">03</span>
-        <div class="swatch" style="background:linear-gradient(135deg,#0A0A0A 0%,#E10600 100%)"></div>
-        <h3>TurboMax Performance</h3>
-        <div class="role">Performance · Preparação esportiva</div>
-        <div class="meta"><span>Preto + Vermelho corrida</span><span>Rajdhani</span><span>Vidro escuro</span></div>
-        <span class="go">Abrir cartão <i class="fa-solid fa-arrow-right"></i></span>
+      <a class="tile reveal" data-d="4" href="index-03.html">
+        <span class="tile__bar" style="background:#E10600"></span>
+        <span class="tile__num">03</span>
+        <span class="tile__body">
+          <span class="tile__name">TurboMax Performance</span>
+          <span class="tile__concept">Performance · Preparação esportiva <span class="tone tone--dark">DARK</span></span>
+        </span>
+        <i class="fa-solid fa-arrow-right tile__arrow"></i>
       </a>
 
-      <a class="card" data-d="4" href="index-04.html">
-        <span class="num">04</span>
-        <div class="swatch" style="background:linear-gradient(135deg,#2D6A4F 0%,#e3ede4 100%)"></div>
-        <h3>AutoMec Brasil</h3>
-        <div class="role">Especialista · Injeção &amp; Ar-condicionado</div>
-        <div class="meta"><span>Verde oficina + Creme</span><span>Saira</span><span>Vidro claro</span></div>
-        <span class="go">Abrir cartão <i class="fa-solid fa-arrow-right"></i></span>
+      <a class="tile reveal" data-d="5" href="index-04.html">
+        <span class="tile__bar" style="background:#2D6A4F"></span>
+        <span class="tile__num">04</span>
+        <span class="tile__body">
+          <span class="tile__name">AutoMec Brasil</span>
+          <span class="tile__concept">Especialista · Injeção &amp; Ar-condicionado <span class="tone tone--light">LIGHT</span></span>
+        </span>
+        <i class="fa-solid fa-arrow-right tile__arrow"></i>
       </a>
 
-      <a class="card" data-d="5" href="index-05.html">
-        <span class="num">05</span>
-        <div class="swatch" style="background:linear-gradient(135deg,#1C1F24 0%,#C0C5CE 70%,#4A90E2 100%)"></div>
-        <h3>Prime Auto</h3>
-        <div class="role">Premium · Importados &amp; Boutique</div>
-        <div class="meta"><span>Cromado + Azul</span><span>Saira Condensed</span><span>Vidro escuro</span></div>
-        <span class="go">Abrir cartão <i class="fa-solid fa-arrow-right"></i></span>
+      <a class="tile reveal" data-d="6" href="index-05.html">
+        <span class="tile__bar" style="background:#4A90E2"></span>
+        <span class="tile__num">05</span>
+        <span class="tile__body">
+          <span class="tile__name">Prime Auto</span>
+          <span class="tile__concept">Premium · Importados &amp; Boutique <span class="tone tone--dark">DARK</span></span>
+        </span>
+        <i class="fa-solid fa-arrow-right tile__arrow"></i>
       </a>
-    </div>
+    </nav>
 
-    <footer class="foot">
-      Feito com glassmorphism · CTA principal: <strong>Agendar</strong> (WhatsApp pré-preenchido)<br>
-      Hospedado no GitHub Pages
+    <footer class="foot reveal" data-d="7">
+      <p class="foot__hint">Toque em um modelo para abrir o cartão digital.<br />Cada um tem <b>Agendar</b> (WhatsApp) e <b>Salvar Contato</b>.</p>
+      <a class="foot__repo" href="https://github.com/Victor-Queiroz-1/oficina-cards" target="_blank" rel="noopener">
+        <i class="fa-brands fa-github"></i> Ver no GitHub
+      </a>
     </footer>
-  </div>
+  </main>
 
-<script>
-  const bg="https://images.unsplash.com/photo-1486006920555-c77dcf18193c?w=1400&q=80&auto=format";
-  const el=document.getElementById("bgImg");
-  el.style.backgroundImage=`url("${bg}")`;
-  const p=new Image();p.onload=()=>el.classList.add("is-loaded");p.src=bg;
-</script>
+  <script>
+    // Background com fallback
+    const BG = "https://images.unsplash.com/photo-1486006920555-c18193f18193c?w=1400&q=80&auto=format";
+    const bg = document.getElementById("bgImg");
+    bg.style.backgroundImage = `url("${BG}")`;
+    const probe = new Image();
+    probe.onload = () => bg.classList.add("is-loaded");
+    probe.src = BG;
+  </script>
 </body>
 </html>
