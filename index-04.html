@@ -68,12 +68,12 @@
     .topbar__avatar.no-img img { display:none; }
     .topbar__avatar.no-img .initials { display:flex; }
     .topbar__info { flex:1; min-width:0; }
-    .topbar__name { font-family:'Saira',sans-serif; font-size:1.32rem; font-weight:700;
+    .topbar__name { font-family:'Saira',sans-serif; font-size:clamp(1.1rem,4.5vw,1.32rem); font-weight:700;
       letter-spacing:0.2px; line-height:1.1; color:var(--text-title); }
-    .topbar__tag { font-size:0.7rem; font-weight:600; letter-spacing:1.2px;
+    .topbar__tag { font-size:0.72rem; font-weight:600; letter-spacing:1.3px;
       text-transform:uppercase; color:var(--green); margin-top:3px; }
     .pill { flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px;
-      font-family:'Saira',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.6px;
+      font-family:'Saira',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.6px;
       text-transform:uppercase; white-space:nowrap;
       transition:background .3s var(--ease), color .3s var(--ease); -webkit-tap-highlight-color:transparent; }
     .pill--open { color:var(--green-deep); background:rgba(82,183,136,0.25); border:1px solid rgba(45,106,79,0.35); }
@@ -91,15 +91,15 @@
       background:linear-gradient(180deg,rgba(27,67,50,0) 40%,rgba(27,67,50,0.78) 100%); }
     .hero__badge { position:absolute; top:12px; left:12px; z-index:2;
       display:inline-flex; align-items:center; gap:6px; padding:7px 13px; border-radius:999px;
-      font-family:'Saira',sans-serif; font-size:0.7rem; font-weight:700;
+      font-family:'Saira',sans-serif; font-size:0.72rem; font-weight:700;
       letter-spacing:1.3px; text-transform:uppercase; color:#FFFFFF;
       background:linear-gradient(135deg,var(--green-soft),var(--green));
       box-shadow:0 4px 12px -3px rgba(45,106,79,0.6); }
     .hero__body { padding:14px 16px 16px; }
-    .hero__title { font-family:'Saira',sans-serif; font-size:1.28rem; font-weight:700;
+    .hero__title { font-family:'Saira',sans-serif; font-size:clamp(1.05rem,4.5vw,1.28rem); font-weight:700;
       line-height:1.25; color:var(--text-title); }
     .hero__meta { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-top:6px; }
-    .hero__price { font-family:'Saira',sans-serif; font-size:1.22rem; font-weight:800; color:var(--green); }
+    .hero__price { font-family:'Saira',sans-serif; font-size:clamp(1rem,4vw,1.22rem); font-weight:800; color:var(--green); }
     .hero__sub { font-size:0.78rem; color:var(--text-dim); font-weight:500; }
     .hero__body > .hero__sub { margin-top:4px; line-height:1.35; }
 
@@ -132,13 +132,13 @@
     .proof__top { display:flex; align-items:center; justify-content:center; gap:4px;
       font-family:'Saira',sans-serif; font-size:1.02rem; font-weight:700; color:var(--green-deep); }
     .proof__top i { color:#E0A03A; font-size:0.8rem; }
-    .proof__label { margin-top:2px; font-size:0.7rem; font-weight:600;
+    .proof__label { margin-top:2px; font-size:0.72rem; font-weight:600;
       letter-spacing:0.5px; text-transform:uppercase; color:var(--text-dim); }
 
     /* ===== TÍTULO DE SEÇÃO ===== */
-    .section-head { margin-top:20px; display:flex; align-items:baseline; gap:8px; padding:0 2px; }
-    .section-head__title { font-family:'Saira',sans-serif; font-size:1.2rem; font-weight:700; color:var(--text-title); }
-    .section-head__sub { font-size:0.7rem; font-weight:600; letter-spacing:1.2px;
+    .section-head { margin-top:20px; margin-bottom:10px; display:flex; align-items:baseline; gap:8px; padding:0 2px; }
+    .section-head__title { font-family:'Saira',sans-serif; font-size:clamp(0.95rem,3.5vw,1.2rem); font-weight:700; letter-spacing:0.5px; color:var(--text-title); }
+    .section-head__sub { font-size:0.72rem; font-weight:600; letter-spacing:1.3px;
       text-transform:uppercase; color:var(--text-dim); }
 
     /* ===== SERVIÇOS ===== */
@@ -217,7 +217,7 @@
     .cta-final { margin-top:18px; padding:18px 16px; border-radius:18px; text-align:center;
       background:linear-gradient(135deg,rgba(45,106,79,0.12),rgba(82,183,136,0.08));
       border:1px solid rgba(45,106,79,0.3); }
-    .cta-final__title { font-family:'Saira',sans-serif; font-size:1.3rem; font-weight:700;
+    .cta-final__title { font-family:'Saira',sans-serif; font-size:clamp(1.05rem,4vw,1.3rem); font-weight:700;
       color:var(--green-deep); line-height:1.15; }
     .cta-final__sub { font-size:0.82rem; color:var(--text-dim); margin-top:4px; }
     .cta-final__btn { display:inline-flex; align-items:center; justify-content:center; gap:10px;
