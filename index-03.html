@@ -13,300 +13,137 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
 
   <style>
-    /* ===== VARIÁVEIS & RESET — Vidro ESCURO vermelho corrida ===== */
-    :root {
-      --red:#E10600; --red-soft:#FF2D20; --red-deep:#8B0000;
-      --text:#FFFFFF; --text-dim:#F0D4D4;
-      --glass-bg:rgba(22,8,8,0.55); --glass-brd:rgba(225,6,0,0.28);
-      --ease:cubic-bezier(0.22,1,0.36,1);
-    }
-    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html { -webkit-text-size-adjust:100%; }
-    body {
-      font-family:'Inter',system-ui,sans-serif; color:var(--text);
-      min-height:100dvh; display:flex; align-items:center; justify-content:center;
-      padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 96px);
-      position:relative; overflow-x:hidden; background:#0A0A0A; overscroll-behavior:none;
-    }
-
-    /* ===== BACKGROUND (fallback gradiente escuro + overlay) ===== */
-    .bg { position:fixed; inset:0; z-index:-2; background-color:#0A0A0A;
-      background-image:radial-gradient(circle at 50% 0%,rgba(225,6,0,0.18),transparent 55%),
-        linear-gradient(160deg,#0A0A0A 0%,#1a0606 55%,#0a0000 100%); }
-    .bg__img { position:fixed; inset:0; z-index:-1; background-size:cover; background-position:center;
-      filter:saturate(110%) brightness(0.55); opacity:0; transition:opacity 1.2s ease; }
-    .bg__img.is-loaded { opacity:1; }
-    .bg__overlay { position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background:linear-gradient(180deg,rgba(10,0,0,0.45) 0%,rgba(10,0,0,0.55) 55%,rgba(10,0,0,0.7) 100%); }
-
-    /* ===== CARD PRINCIPAL (GLASS ESCURO vermelho) ===== */
-    .card {
-      width:min(92vw,420px); padding:22px 20px 24px; border-radius:26px;
-      background:var(--glass-bg);
-      -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
-      border:1px solid var(--glass-brd);
-      box-shadow:0 24px 60px -18px rgba(0,0,0,0.75),0 2px 0 0 rgba(255,255,255,0.06) inset,0 -2px 30px -10px rgba(225,6,0,0.35) inset;
-      position:relative;
-    }
-    .card::before { content:""; position:absolute; top:0; left:18%; right:18%; height:1px;
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent); }
-    .section { margin-top:20px; }
-    .section .heading { margin-top:0; margin-bottom:10px; }
-
-    /* ===== TOPBAR ===== */
-    .topbar { display:flex; align-items:center; gap:12px; }
-    .topbar__avatar { width:46px; height:46px; flex:0 0 46px; border-radius:50%; position:relative; padding:2px;
-      background:linear-gradient(145deg,var(--red-soft),var(--red),var(--red-deep));
-      box-shadow:0 0 0 1px rgba(225,6,0,0.45),0 4px 12px -4px rgba(225,6,0,0.6); }
-    .topbar__avatar img { width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; background:#1a0606; }
-    .topbar__avatar .initials { display:none; width:100%; height:100%; border-radius:50%;
-      background:linear-gradient(135deg,var(--red-deep),#1a0606); color:var(--text);
-      font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem;
-      align-items:center; justify-content:center; }
-    .topbar__avatar.no-img img { display:none; }
-    .topbar__avatar.no-img .initials { display:flex; }
-    .topbar__info { flex:1; min-width:0; }
-    .topbar__name { font-family:'Rajdhani',sans-serif; font-size:clamp(1.1rem,4.5vw,1.3rem); font-weight:700;
-      letter-spacing:0.6px; line-height:1.1; color:var(--text); text-transform:uppercase; }
-    .topbar__tagline { font-size:0.7rem; font-weight:600; letter-spacing:1.2px; text-transform:uppercase;
-      color:var(--red-soft); margin-top:3px; }
-    .pill { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:999px;
-      font-family:'Rajdhani',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.5px;
-      text-transform:uppercase; white-space:nowrap; border:1px solid rgba(255,255,255,0.15);
-      transition:background .25s var(--ease),color .25s var(--ease); }
-    .pill--open  { background:rgba(37,211,102,0.18); color:#4ADE80; border-color:rgba(37,211,102,0.4); }
-    .pill--closed{ background:rgba(225,6,0,0.18); color:var(--red-soft); border-color:rgba(225,6,0,0.4); }
-    .pill__dot { width:7px; height:7px; border-radius:50%; background:currentColor; box-shadow:0 0 0 3px rgba(255,255,255,0.1); }
-
-    /* ===== HERO ===== */
-    .hero { margin-top:16px; border-radius:22px; overflow:hidden; position:relative;
-      border:1px solid rgba(225,6,0,0.28); box-shadow:0 14px 30px -16px rgba(0,0,0,0.75); background:rgba(10,0,0,0.45); }
-    .hero__media { position:relative; height:190px; background-size:cover; background-position:center; background-color:#1a0606; }
-    .hero__media::after { content:""; position:absolute; inset:0;
-      background:linear-gradient(180deg,rgba(10,0,0,0.05) 30%,rgba(10,0,0,0) 55%,rgba(10,0,0,0.7) 100%); }
-    .hero__badge { position:absolute; top:12px; left:12px; z-index:2; padding:6px 14px; border-radius:999px;
-      font-family:'Rajdhani',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:1.4px;
-      text-transform:uppercase; color:#fff; background:linear-gradient(135deg,var(--red-soft),var(--red));
-      box-shadow:0 4px 12px -4px rgba(225,6,0,0.7); }
-    .hero__body { padding:14px 16px 16px; }
-    .hero__title { font-family:'Rajdhani',sans-serif; font-size:clamp(1.05rem,4.5vw,1.25rem); font-weight:600; letter-spacing:0.4px;
-      line-height:1.25; color:var(--text); text-transform:uppercase; }
-    .hero__meta { display:flex; align-items:baseline; justify-content:space-between; margin-top:6px; gap:10px; }
-    .hero__price { font-family:'Rajdhani',sans-serif; font-size:1.15rem; font-weight:700; color:var(--red-soft); }
-    .hero__note { font-size:0.74rem; color:var(--text-dim); font-weight:500; }
-    .hero__sub { font-size:0.74rem; color:var(--text-dim); font-weight:500; line-height:1.4; margin-top:4px; }
-
-    .cta-primary { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; margin-top:14px;
-      padding:15px 18px; min-height:48px; border:0; border-radius:16px; cursor:pointer; text-decoration:none;
-      font-family:'Rajdhani',sans-serif; font-size:0.96rem; font-weight:600; letter-spacing:1.2px;
-      text-transform:uppercase; color:#fff;
-      background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 55%,var(--red-deep) 100%);
-      box-shadow:0 10px 26px -8px rgba(225,6,0,0.65),0 1px 0 rgba(255,255,255,0.18) inset;
-      transition:transform .25s var(--ease),box-shadow .25s var(--ease),filter .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; position:relative; overflow:hidden; }
-    .cta-primary::after { content:""; position:absolute; top:0; left:-120%; width:60%; height:100%;
-      background:linear-gradient(120deg,transparent,rgba(255,255,255,0.45),transparent);
-      transform:skewX(-20deg); transition:left .7s var(--ease); }
-    .cta-primary:hover { transform:scale(1.03); filter:brightness(1.04); }
-    .cta-primary:hover::after { left:130%; }
-    .cta-primary:active { transform:scale(0.97); }
-    .cta-primary i { font-size:1.05rem; }
-
-    /* ===== PROVA SOCIAL ===== */
-    .social-proof { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 12px;
-      padding:10px 12px; margin-top:14px; border-radius:18px;
-      background:rgba(225,6,0,0.08); border:1px solid rgba(225,6,0,0.25);
-      font-size:0.74rem; font-weight:600; color:var(--text); }
-    .social-proof .star { color:#FFB547; letter-spacing:-1px; }
-    .social-proof .sep { width:4px; height:4px; border-radius:50%; background:var(--red-soft); opacity:0.7; }
-
-    /* ===== TÍTULO SEÇÃO + GRID SERVIÇOS + STEPS + DEPOIMENTO + AÇÕES + CTA FINAL + SAVE ===== */
-    .heading { display:flex; align-items:center; gap:8px; margin-bottom:10px;
-      font-family:'Rajdhani',sans-serif; font-size:1.15rem; font-weight:600; letter-spacing:0.6px;
-      color:var(--text); text-transform:uppercase; }
-    .heading i { color:var(--red-soft); font-size:0.95rem; }
-
-    .serv-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .serv { border-radius:18px; overflow:hidden; background:rgba(10,0,0,0.45);
-      border:1px solid rgba(225,6,0,0.22); box-shadow:0 6px 18px -12px rgba(225,6,0,0.5);
-      display:flex; flex-direction:column;
-      transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; }
-    .serv:hover { transform:scale(1.03); border-color:rgba(225,6,0,0.55); box-shadow:0 10px 22px -10px rgba(225,6,0,0.55); }
-    .serv:active { transform:scale(0.97); }
-    .serv__thumb { width:100%; aspect-ratio:16/9; background-size:cover; background-position:center; background-color:#1a0606; }
-    .serv__body { padding:10px 11px 11px; display:flex; flex-direction:column; gap:7px; flex:1; }
-    .serv__name { font-family:'Rajdhani',sans-serif; font-size:0.86rem; font-weight:600; line-height:1.25; color:var(--text); }
-    .serv__desc { font-size:0.72rem; color:var(--text-dim); line-height:1.35; margin-top:2px; display:block; min-height:2.4em; }
-    .serv__price { font-size:0.84rem; font-weight:700; color:var(--red-soft); }
-    .serv__cta { margin-top:auto; display:inline-flex; align-items:center; justify-content:center; gap:5px;
-      padding:11px 14px; min-height:44px; border-radius:10px; text-decoration:none;
-      font-family:'Rajdhani',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.6px;
-      text-transform:uppercase; color:#fff; background:linear-gradient(135deg,var(--red),var(--red-deep));
-      transition:transform .2s var(--ease),filter .2s var(--ease); -webkit-tap-highlight-color:transparent; }
-    .serv__cta:hover { transform:scale(1.03); filter:brightness(1.08); }
-    .serv__cta:active { transform:scale(0.96); }
-
-    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .step { text-align:center; padding:12px 6px; border-radius:16px; background:rgba(10,0,0,0.45); border:1px solid rgba(225,6,0,0.22); }
-    .step__num { width:26px; height:26px; margin:0 auto 6px; border-radius:50%; display:grid; place-items:center;
-      font-family:'Rajdhani',sans-serif; font-size:0.78rem; font-weight:700; color:#fff;
-      background:linear-gradient(135deg,var(--red-soft),var(--red)); box-shadow:0 4px 10px -4px rgba(225,6,0,0.6); }
-    .step__label { font-size:0.72rem; font-weight:600; color:var(--text); line-height:1.25; }
-    .step__sub { font-size:0.6rem; font-weight:400; color:var(--text-dim); line-height:1.3; margin-top:3px; }
-    .steps__note { grid-column:1/-1; margin-top:9px; text-align:center; font-size:0.68rem; color:var(--text-dim);
-      font-weight:500; line-height:1.45; padding:0 4px; letter-spacing:0.2px; }
-    .steps__note i { color:var(--red-soft); margin-right:5px; }
-    .advance-note { margin-top:9px; text-align:center; font-size:0.74rem; font-style:italic;
-      color:var(--red-soft); font-weight:600; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; }
-    .advance-note i { font-size:0.82rem; }
-
-    .testimonial { padding:14px 16px; border-radius:18px; background:rgba(10,0,0,0.45); border:1px solid rgba(225,6,0,0.22); position:relative; }
-    .testimonial__stars { color:#FFB547; font-size:0.85rem; letter-spacing:-1px; margin-bottom:6px; }
-    .testimonial__text { font-size:0.86rem; font-weight:400; color:var(--text-dim); line-height:1.5; font-style:italic; }
-    .testimonial__author { margin-top:8px; font-family:'Rajdhani',sans-serif; font-size:0.8rem; font-weight:600;
-      letter-spacing:0.4px; color:var(--red-soft); text-transform:uppercase; }
-
-    /* ===== AÇÕES RÁPIDAS (3 colunas) ===== */
-    .actions-compact { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .action-mini { display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 4px; min-height:44px;
-      border-radius:16px; text-decoration:none; color:var(--text); background:rgba(10,0,0,0.45); border:1px solid rgba(225,6,0,0.22);
-      transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; }
-    .action-mini:hover { transform:scale(1.03); border-color:rgba(225,6,0,0.55); background:rgba(225,6,0,0.1); box-shadow:0 8px 18px -10px rgba(225,6,0,0.5); }
-    .action-mini:active { transform:scale(0.97); }
-    .action-mini__icon { width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-size:1rem;
-      background:rgba(225,6,0,0.12); border:1px solid rgba(225,6,0,0.3); }
-    .action-mini__label { font-size:0.7rem; font-weight:600; letter-spacing:0.3px; color:var(--text-dim); text-align:center; line-height:1.2; }
-    .action-mini--whatsapp .action-mini__icon { color:#25D366; }
-    .action-mini--waze     .action-mini__icon { color:#33CCFF; }
-    .action-mini--reviews  .action-mini__icon { color:#FFB547; }
-    .action-mini--hours    .action-mini__icon { color:var(--red-soft); }
-
-    .cta-final { display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
-      padding:17px 18px; min-height:48px; border:0; border-radius:22px; cursor:pointer; text-decoration:none;
-      font-family:'Rajdhani',sans-serif; font-size:1.02rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#fff;
-      background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 50%,var(--red-deep) 100%);
-      box-shadow:0 14px 30px -10px rgba(225,6,0,0.75),0 1px 0 rgba(255,255,255,0.18) inset;
-      transition:transform .25s var(--ease),box-shadow .25s var(--ease),filter .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; position:relative; overflow:hidden; }
-    .cta-final::after { content:""; position:absolute; top:0; left:-120%; width:60%; height:100%;
-      background:linear-gradient(120deg,transparent,rgba(255,255,255,0.45),transparent);
-      transform:skewX(-20deg); transition:left .8s var(--ease); }
-    .cta-final:hover { transform:scale(1.03); filter:brightness(1.04); }
-    .cta-final:hover::after { left:130%; }
-    .cta-final:active { transform:scale(0.97); }
-    .cta-final i { font-size:1.2rem; }
-
-    /* ===== RODAPÉ — Save + sociais ===== */
-    .save-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-      padding:12px 16px; min-height:44px; border:1px solid var(--red); border-radius:14px; cursor:pointer;
-      font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.6px;
-      text-transform:uppercase; color:var(--red-soft); background:rgba(225,6,0,0.08);
-      transition:transform .25s var(--ease),background .25s var(--ease),color .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; }
-    .save-btn:hover { transform:scale(1.03); background:var(--red); color:#fff; }
-    .save-btn:active { transform:scale(0.97); }
-
-    .footer-row { margin-top:14px; text-align:center; }
-    .socials { display:flex; justify-content:center; gap:12px; margin-top:14px; }
-    .social { width:44px; height:44px; display:grid; place-items:center; border-radius:50%;
-      color:var(--text-dim); text-decoration:none; background:rgba(10,0,0,0.45); border:1px solid rgba(225,6,0,0.25); font-size:0.95rem;
-      transition:transform .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
-      -webkit-tap-highlight-color:transparent; }
-    .social:hover { transform:scale(1.12) translateY(-2px); color:var(--red-soft); border-color:rgba(225,6,0,0.6); background:rgba(225,6,0,0.12); }
-    .social:active { transform:scale(0.94); }
-    .footer__copy { margin-top:12px; font-size:0.7rem; letter-spacing:0.6px; color:rgba(240,212,212,0.55); }
-    .footer__copy b { color:var(--red-soft); font-weight:700; }
-
-    /* ===== BARRA STICKY (mobile) ===== */
-    .sticky-bar { position:fixed; left:0; right:0; bottom:0; z-index:50;
-      padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);
-      background:linear-gradient(180deg,rgba(10,0,0,0.4) 0%,rgba(10,0,0,0.85) 25%,rgba(10,0,0,0.95) 100%);
-      -webkit-backdrop-filter:blur(14px) saturate(120%); backdrop-filter:blur(14px) saturate(120%);
-      border-top:1px solid rgba(225,6,0,0.3); box-shadow:0 -8px 24px -12px rgba(0,0,0,0.6); }
-    .sticky-bar__btn { display:flex; align-items:center; justify-content:center; gap:10px;
-      width:100%; max-width:420px; margin:0 auto; padding:14px 18px; min-height:48px;
-      border:0; border-radius:14px; cursor:pointer; text-decoration:none;
-      font-family:'Rajdhani',sans-serif; font-size:0.96rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#fff;
-      background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 55%,var(--red-deep) 100%);
-      box-shadow:0 8px 20px -8px rgba(225,6,0,0.75);
-      transition:transform .2s var(--ease),filter .2s var(--ease); -webkit-tap-highlight-color:transparent; }
-    .sticky-bar__btn:hover { transform:scale(1.01); filter:brightness(1.05); }
-    .sticky-bar__btn:active { transform:scale(0.985); }
-    .sticky-bar__btn i { font-size:1.15rem; }
-
-    /* ===== ANIMAÇÃO DE ENTRADA (fade-up escalonado) ===== */
-    @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
-    .reveal { opacity:0; animation:fadeUp 0.8s var(--ease) forwards; }
-    .reveal[data-d="1"]  { animation-delay:0.05s; }
-    .reveal[data-d="2"]  { animation-delay:0.14s; }
-    .reveal[data-d="3"]  { animation-delay:0.23s; }
-    .reveal[data-d="4"]  { animation-delay:0.32s; }
-    .reveal[data-d="5"]  { animation-delay:0.41s; }
-    .reveal[data-d="6"]  { animation-delay:0.50s; }
-    .reveal[data-d="7"]  { animation-delay:0.59s; }
-    .reveal[data-d="8"]  { animation-delay:0.68s; }
-    .reveal[data-d="9"]  { animation-delay:0.77s; }
-    .reveal[data-d="10"] { animation-delay:0.86s; }
-    @media (prefers-reduced-motion:reduce) {
-      .reveal { animation:none; opacity:1; }
-      *,*::before,*::after { transition:none !important; }
-    }
-    @media (min-width:600px) {
-      .sticky-bar { display:none; }
-      body { padding-bottom:calc(env(safe-area-inset-bottom) + 18px); }
-    }
-    @media (max-width:380px) {
-      .serv-grid { grid-template-columns:1fr; }
-      .card { padding-left:16px; padding-right:16px; }
-    }
+    :root{--red:#E10600;--red-soft:#FF2D20;--red-deep:#8B0000;--text:#FFFFFF;--text-dim:#F0D4D4;--glass-bg:rgba(22,8,8,0.55);--glass-brd:rgba(225,6,0,0.28);--ease:cubic-bezier(0.22,1,0.36,1)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{-webkit-text-size-adjust:100%}
+    body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 96px);position:relative;overflow-x:hidden;background:#0A0A0A;overscroll-behavior:none}
+    .bg{position:fixed;inset:0;z-index:-2;background-color:#0A0A0A;background-image:radial-gradient(circle at 50% 0%,rgba(225,6,0,0.18),transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1a0606 55%,#0a0000 100%)}
+    .bg__img{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;filter:saturate(110%) brightness(0.55);opacity:0;transition:opacity 1.2s ease}
+    .bg__img.is-loaded{opacity:1}
+    .bg__overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(10,0,0,0.45) 0%,rgba(10,0,0,0.55) 55%,rgba(10,0,0,0.7) 100%)}
+    .card{width:min(92vw,420px);padding:22px 20px 24px;border-radius:26px;background:var(--glass-bg);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--glass-brd);box-shadow:0 24px 60px -18px rgba(0,0,0,0.75),0 2px 0 0 rgba(255,255,255,0.06) inset,0 -2px 30px -10px rgba(225,6,0,0.35) inset;position:relative}
+    .card::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent)}
+    .section{margin-top:20px}
+    .section .heading{margin-top:0;margin-bottom:10px}
+    .topbar{display:flex;align-items:center;gap:12px}
+    .topbar__avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;position:relative;padding:2px;background:linear-gradient(145deg,var(--red-soft),var(--red),var(--red-deep));box-shadow:0 0 0 1px rgba(225,6,0,0.45),0 4px 12px -4px rgba(225,6,0,0.6)}
+    .topbar__avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#1a0606}
+    .topbar__avatar .initials{display:none;width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--red-deep),#1a0606);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;align-items:center;justify-content:center}
+    .topbar__avatar.no-img img{display:none}
+    .topbar__avatar.no-img .initials{display:flex}
+    .topbar__info{flex:1;min-width:0}
+    .topbar__name{font-family:'Rajdhani',sans-serif;font-size:clamp(1.1rem,4.5vw,1.3rem);font-weight:700;letter-spacing:0.6px;line-height:1.1;color:var(--text);text-transform:uppercase}
+    .topbar__tagline{font-size:0.7rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--red-soft);margin-top:3px}
+    .pill{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;font-family:'Rajdhani',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;border:1px solid rgba(255,255,255,0.15);transition:background .25s var(--ease),color .25s var(--ease)}
+    .pill--open{background:rgba(37,211,102,0.18);color:#4ADE80;border-color:rgba(37,211,102,0.4)}
+    .pill--closed{background:rgba(225,6,0,0.18);color:var(--red-soft);border-color:rgba(225,6,0,0.4)}
+    .pill__dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,0.1)}
+    .hero{margin-top:16px;border-radius:22px;overflow:hidden;position:relative;border:1px solid rgba(225,6,0,0.28);box-shadow:0 14px 30px -16px rgba(0,0,0,0.75);background:rgba(10,0,0,0.45)}
+    .hero__media{position:relative;height:190px;background-size:cover;background-position:center;background-color:#1a0606}
+    .hero__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,0,0,0.05) 30%,rgba(10,0,0,0) 55%,rgba(10,0,0,0.7) 100%)}
+    .hero__badge{position:absolute;top:12px;left:12px;z-index:2;padding:6px 14px;border-radius:999px;font-family:'Rajdhani',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--red-soft),var(--red));box-shadow:0 4px 12px -4px rgba(225,6,0,0.7)}
+    .hero__body{padding:14px 16px 16px}
+    .hero__title{font-family:'Rajdhani',sans-serif;font-size:clamp(1.05rem,4.5vw,1.25rem);font-weight:600;letter-spacing:0.4px;line-height:1.25;color:var(--text);text-transform:uppercase}
+    .hero__meta{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px;gap:10px}
+    .hero__price{font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:700;color:var(--red-soft)}
+    .hero__note{font-size:0.74rem;color:var(--text-dim);font-weight:500}
+    .hero__sub{font-size:0.74rem;color:var(--text-dim);font-weight:500;line-height:1.4;margin-top:4px}
+    .cta-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:14px;padding:15px 18px;min-height:48px;border:0;border-radius:16px;cursor:pointer;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:0.96rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 55%,var(--red-deep) 100%);box-shadow:0 10px 26px -8px rgba(225,6,0,0.65),0 1px 0 rgba(255,255,255,0.18) inset;transition:transform .25s var(--ease),box-shadow .25s var(--ease),filter .25s var(--ease);-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+    .cta-primary::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.45),transparent);transform:skewX(-20deg);transition:left .7s var(--ease)}
+    .cta-primary:hover{transform:scale(1.03);filter:brightness(1.04)}
+    .cta-primary:hover::after{left:130%}
+    .cta-primary:active{transform:scale(0.97)}
+    .cta-primary i{font-size:1.05rem}
+    .social-proof{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px;padding:10px 12px;margin-top:14px;border-radius:18px;background:rgba(225,6,0,0.08);border:1px solid rgba(225,6,0,0.25);font-size:0.74rem;font-weight:600;color:var(--text)}
+    .social-proof .star{color:#FFB547;letter-spacing:-1px}
+    .social-proof .sep{width:4px;height:4px;border-radius:50%;background:var(--red-soft);opacity:0.7}
+    .heading{display:flex;align-items:center;gap:8px;margin-top:0;margin-bottom:10px;font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:600;letter-spacing:1.2px;line-height:1.2;color:var(--text);text-transform:uppercase}
+    .heading i{color:var(--red-soft);font-size:0.95rem}
+    .serv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .serv{border-radius:18px;overflow:hidden;background:rgba(10,0,0,0.45);border:1px solid rgba(225,6,0,0.22);box-shadow:0 6px 18px -12px rgba(225,6,0,0.5);display:flex;flex-direction:column;transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);-webkit-tap-highlight-color:transparent}
+    .serv:hover{transform:scale(1.03);border-color:rgba(225,6,0,0.55);box-shadow:0 10px 22px -10px rgba(225,6,0,0.55)}
+    .serv:active{transform:scale(0.97)}
+    .serv__thumb{width:100%;aspect-ratio:16/9;background-size:cover;background-position:center;background-color:#1a0606}
+    .serv__body{padding:10px 11px 11px;display:flex;flex-direction:column;gap:7px;flex:1}
+    .serv__name{font-family:'Rajdhani',sans-serif;font-size:0.86rem;font-weight:600;line-height:1.25;color:var(--text)}
+    .serv__desc{font-size:0.72rem;color:var(--text-dim);line-height:1.35;margin-top:2px;display:block;min-height:2.4em}
+    .serv__price{font-size:0.84rem;font-weight:700;color:var(--red-soft)}
+    .serv__cta{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:11px 14px;min-height:44px;border-radius:10px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--red),var(--red-deep));transition:transform .2s var(--ease),filter .2s var(--ease);-webkit-tap-highlight-color:transparent}
+    .serv__cta:hover{transform:scale(1.03);filter:brightness(1.08)}
+    .serv__cta:active{transform:scale(0.96)}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .step{text-align:center;padding:13px 6px;border-radius:16px;background:rgba(10,0,0,0.45);border:1px solid rgba(225,6,0,0.22)}
+    .step__num{width:26px;height:26px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-family:'Rajdhani',sans-serif;font-size:0.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--red-soft),var(--red));box-shadow:0 4px 10px -4px rgba(225,6,0,0.6)}
+    .step__label{font-size:0.78rem;font-weight:600;color:var(--text);line-height:1.2}
+    .step__sub{font-size:0.72rem;font-weight:400;color:var(--text-dim);line-height:1.3;margin-top:3px}
+    .steps__note{grid-column:1/-1;margin-top:10px;text-align:center;font-size:0.72rem;color:var(--text-dim);font-weight:500;line-height:1.45;padding:0 4px;letter-spacing:0.2px}
+    .steps__note i{color:var(--red-soft);margin-right:5px}
+    .advance-note{margin-top:10px;text-align:center;font-size:0.78rem;font-style:italic;color:var(--red-soft);font-weight:600;display:inline-flex;align-items:center;gap:5px;width:100%;justify-content:center}
+    .advance-note i{font-size:0.82rem}
+    .testimonial{padding:14px 16px;border-radius:18px;background:rgba(10,0,0,0.45);border:1px solid rgba(225,6,0,0.22);position:relative}
+    .testimonial__stars{color:#FFB547;font-size:0.85rem;letter-spacing:-1px;margin-bottom:6px}
+    .testimonial__text{font-size:0.86rem;font-weight:400;color:var(--text-dim);line-height:1.5;font-style:italic}
+    .testimonial__author{margin-top:8px;font-family:'Rajdhani',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:0.4px;color:var(--red-soft);text-transform:uppercase}
+    .actions-compact{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .action-mini{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px;min-height:44px;border-radius:16px;text-decoration:none;color:var(--text);background:rgba(10,0,0,0.45);border:1px solid rgba(225,6,0,0.22);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);-webkit-tap-highlight-color:transparent}
+    .action-mini:hover{transform:scale(1.03);border-color:rgba(225,6,0,0.55);background:rgba(225,6,0,0.1);box-shadow:0 8px 18px -10px rgba(225,6,0,0.5)}
+    .action-mini:active{transform:scale(0.97)}
+    .action-mini__icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:1rem;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3)}
+    .action-mini__label{font-size:0.74rem;font-weight:600;letter-spacing:0.3px;color:var(--text-dim);text-align:center;line-height:1.2}
+    .action-mini--whatsapp .action-mini__icon{color:#25D366}
+    .action-mini--waze .action-mini__icon{color:#33CCFF}
+    .action-mini--reviews .action-mini__icon{color:#FFB547}
+    .action-mini--hours .action-mini__icon{color:var(--red-soft)}
+    .cta-final{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px 18px;min-height:48px;border:0;border-radius:22px;cursor:pointer;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:1.02rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 50%,var(--red-deep) 100%);box-shadow:0 14px 30px -10px rgba(225,6,0,0.75),0 1px 0 rgba(255,255,255,0.18) inset;transition:transform .25s var(--ease),box-shadow .25s var(--ease),filter .25s var(--ease);-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+    .cta-final::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.45),transparent);transform:skewX(-20deg);transition:left .8s var(--ease)}
+    .cta-final:hover{transform:scale(1.03);filter:brightness(1.04)}
+    .cta-final:hover::after{left:130%}
+    .cta-final:active{transform:scale(0.97)}
+    .cta-final i{font-size:1.2rem}
+    .save-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;min-height:44px;border:1px solid var(--red);border-radius:14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--red-soft);background:rgba(225,6,0,0.08);transition:transform .25s var(--ease),background .25s var(--ease),color .25s var(--ease);-webkit-tap-highlight-color:transparent}
+    .save-btn:hover{transform:scale(1.03);background:var(--red);color:#fff}
+    .save-btn:active{transform:scale(0.97)}
+    .footer-row{margin-top:14px;text-align:center}
+    .socials{display:flex;justify-content:center;gap:12px;margin-top:14px}
+    .social{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;color:var(--text-dim);text-decoration:none;background:rgba(10,0,0,0.45);border:1px solid rgba(225,6,0,0.25);font-size:0.95rem;transition:transform .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);-webkit-tap-highlight-color:transparent}
+    .social:hover{transform:scale(1.12) translateY(-2px);color:var(--red-soft);border-color:rgba(225,6,0,0.6);background:rgba(225,6,0,0.12)}
+    .social:active{transform:scale(0.94)}
+    .footer__copy{margin-top:12px;font-size:0.72rem;letter-spacing:0.6px;color:rgba(240,212,212,0.55)}
+    .footer__copy b{color:var(--red-soft);font-weight:700}
+    .sticky-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);background:linear-gradient(180deg,rgba(10,0,0,0.4) 0%,rgba(10,0,0,0.85) 25%,rgba(10,0,0,0.95) 100%);-webkit-backdrop-filter:blur(14px) saturate(120%);backdrop-filter:blur(14px) saturate(120%);border-top:1px solid rgba(225,6,0,0.3);box-shadow:0 -8px 24px -12px rgba(0,0,0,0.6)}
+    .sticky-bar__btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:420px;margin:0 auto;padding:14px 18px;min-height:48px;border:0;border-radius:14px;cursor:pointer;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:0.96rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--red-soft) 0%,var(--red) 55%,var(--red-deep) 100%);box-shadow:0 8px 20px -8px rgba(225,6,0,0.75);transition:transform .2s var(--ease),filter .2s var(--ease);-webkit-tap-highlight-color:transparent}
+    .sticky-bar__btn:hover{transform:scale(1.01);filter:brightness(1.05)}
+    .sticky-bar__btn:active{transform:scale(0.985)}
+    .sticky-bar__btn i{font-size:1.15rem}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;animation:fadeUp 0.8s var(--ease) forwards}
+    .reveal[data-d="1"]{animation-delay:0.05s}.reveal[data-d="2"]{animation-delay:0.14s}
+    .reveal[data-d="3"]{animation-delay:0.23s}.reveal[data-d="4"]{animation-delay:0.32s}
+    .reveal[data-d="5"]{animation-delay:0.41s}.reveal[data-d="6"]{animation-delay:0.50s}
+    .reveal[data-d="7"]{animation-delay:0.59s}.reveal[data-d="8"]{animation-delay:0.68s}
+    .reveal[data-d="9"]{animation-delay:0.77s}.reveal[data-d="10"]{animation-delay:0.86s}
+    @media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1}*,*::before,*::after{transition:none!important}}
+    @media(min-width:600px){.sticky-bar{display:none}body{padding-bottom:calc(env(safe-area-inset-bottom) + 18px)}}
+    @media(max-width:380px){.serv-grid{grid-template-columns:1fr}.card{padding-left:16px;padding-right:16px}}
   </style>
 </head>
-
 <body>
-  <div class="bg"></div>
-  <div class="bg__img" id="bgImg"></div>
-  <div class="bg__overlay"></div>
-
+  <div class="bg"></div><div class="bg__img" id="bgImg"></div><div class="bg__overlay"></div>
   <main class="card reveal" data-d="1" aria-label="Cartão de visita digital">
-
-    <!-- 1. TOPBAR -->
     <header class="topbar reveal" data-d="2">
-      <div class="topbar__avatar" id="avatar">
-        <img id="avatarImg" alt="Foto da oficina" />
-        <span class="initials" id="initials">TP</span>
-      </div>
-      <div class="topbar__info">
-        <h1 class="topbar__name" id="name">TurboMax Performance</h1>
-        <p class="topbar__tagline" id="role">Preparação · Performance · Alta Potência</p>
-      </div>
-      <span class="pill pill--open" id="statusPill" title="Horário de funcionamento">
-        <span class="pill__dot"></span>
-        <span id="statusText">Aberto</span>
-      </span>
+      <div class="topbar__avatar" id="avatar"><img id="avatarImg" alt="Foto da oficina" /><span class="initials" id="initials">TP</span></div>
+      <div class="topbar__info"><h1 class="topbar__name" id="name">TurboMax Performance</h1><p class="topbar__tagline" id="role">Preparação · Performance · Alta Potência</p></div>
+      <span class="pill pill--open" id="statusPill" title="Horário de funcionamento"><span class="pill__dot"></span><span id="statusText">Aberto</span></span>
     </header>
-
-    <!-- 2. HERO -->
     <section class="hero reveal" data-d="3" aria-label="Preparação em destaque">
-      <div class="hero__media" id="heroMedia">
-        <span class="hero__badge" id="heroBadge">Edição Limitada</span>
-      </div>
+      <div class="hero__media" id="heroMedia"><span class="hero__badge" id="heroBadge">Dyno Test Incluso</span></div>
       <div class="hero__body">
         <h2 class="hero__title" id="heroTitle">Kit Preparação Motor + Remapeamento</h2>
-        <p class="hero__sub" id="heroSub">Preparação e performance de verdade para seu carro.</p>
-        <div class="hero__meta">
-          <span class="hero__price" id="heroPrice">Sob orçamento</span>
-          <span class="hero__note">Diagnóstico completo</span>
-        </div>
-        <a class="cta-primary" id="heroCta" href="#" target="_blank" rel="noopener">
-          <i class="fa-solid fa-gauge-high"></i>
-          <span>Agendar Diagnóstico</span>
-        </a>
+        <p class="hero__sub" id="heroSub">Potência, torque e resposta de verdade no acelerador.</p>
+        <div class="hero__meta"><span class="hero__price" id="heroPrice">Sob orçamento</span><span class="hero__note">Diagnóstico completo</span></div>
+        <a class="cta-primary" id="heroCta" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-gauge-high"></i><span>Agendar Diagnóstico</span></a>
       </div>
     </section>
-
-    <!-- 3. PROVA SOCIAL -->
     <div class="social-proof reveal" data-d="4">
       <span><span class="star">★★★★★</span> <strong id="rating">5,0</strong></span>
       <span class="sep"></span>
@@ -314,71 +151,35 @@
       <span class="sep"></span>
       <span id="selo">Especialistas em preparação</span>
     </div>
-
-    <!-- 4. SERVIÇOS / PREPARAÇÕES -->
     <section class="section reveal" data-d="5" aria-label="Preparações">
       <h3 class="heading"><i class="fa-solid fa-bolt"></i> Preparações</h3>
       <div class="serv-grid" id="servGrid"></div>
     </section>
-
-    <!-- 5. COMO FUNCIONA -->
     <section class="section reveal" data-d="6" aria-label="Como funciona">
       <h3 class="heading"><i class="fa-solid fa-list-check"></i> Como Funciona</h3>
       <div class="steps">
-        <div class="step"><div class="step__num">1</div><div class="step__label">Diagnóstico</div><div class="step__sub">Veja serviços e preços</div></div>
-        <div class="step"><div class="step__num">2</div><div class="step__label">Preparação</div><div class="step__sub">Agende o melhor horário</div></div>
-        <div class="step"><div class="step__num">3</div><div class="step__label">Banco de Provas</div><div class="step__sub">Receba o laudo no Zap</div></div>
-        <p class="steps__note" id="stepsNote">
-          <i class="fa-solid fa-gauge-high"></i><span>Dinamômetro próprio · Preparação sob encomenda · Garantia de 6 meses · Agende com 48h</span>
-        </p>
+        <div class="step"><div class="step__num">1</div><div class="step__label">Diagnostique</div><div class="step__sub">Veja serviços e preços</div></div>
+        <div class="step"><div class="step__num">2</div><div class="step__label">Prepare</div><div class="step__sub">Agende o melhor horário</div></div>
+        <div class="step"><div class="step__num">3</div><div class="step__label">Teste no Banco</div><div class="step__sub">Receba o laudo no Zap</div></div>
+        <p class="steps__note" id="stepsNote"><i class="fa-solid fa-gauge-high"></i><span>Dinamômetro próprio · Preparação sob encomenda · Garantia de 6 meses · Agende com 48h</span></p>
       </div>
-      <p class="advance-note" id="advanceNote">
-        <i class="fa-solid fa-circle-check"></i>
-        Agende seu diagnóstico de performance
-      </p>
+      <p class="advance-note" id="advanceNote"><i class="fa-solid fa-circle-check"></i>Agende seu diagnóstico de performance</p>
     </section>
-
-    <!-- 6. DEPOIMENTO -->
     <section class="section reveal" data-d="7" aria-label="Depoimento de cliente">
-      <div class="testimonial">
-        <div class="testimonial__stars">★★★★★</div>
-        <p class="testimonial__text" id="testimonialText"></p>
-        <p class="testimonial__author" id="testimonialAuthor"></p>
-      </div>
+      <div class="testimonial"><div class="testimonial__stars">★★★★★</div><p class="testimonial__text" id="testimonialText"></p><p class="testimonial__author" id="testimonialAuthor"></p></div>
     </section>
-
-    <!-- 7. AÇÕES RÁPIDAS -->
     <section class="section reveal" data-d="8" aria-label="Ações rápidas">
       <div class="actions-compact">
-        <a class="action-mini action-mini--whatsapp" id="waLink" target="_blank" rel="noopener">
-          <span class="action-mini__icon"><i class="fa-brands fa-whatsapp"></i></span>
-          <span class="action-mini__label">WhatsApp</span>
-        </a>
-        <a class="action-mini action-mini--waze" id="wazeLink" target="_blank" rel="noopener">
-          <span class="action-mini__icon"><i class="fa-solid fa-location-dot"></i></span>
-          <span class="action-mini__label">Localização</span>
-        </a>
-        <a class="action-mini action-mini--reviews" id="reviewsLink" target="_blank" rel="noopener">
-          <span class="action-mini__icon"><i class="fa-solid fa-star"></i></span>
-          <span class="action-mini__label">Avaliações</span>
-        </a>
+        <a class="action-mini action-mini--whatsapp" id="waLink" target="_blank" rel="noopener"><span class="action-mini__icon"><i class="fa-brands fa-whatsapp"></i></span><span class="action-mini__label">WhatsApp</span></a>
+        <a class="action-mini action-mini--waze" id="wazeLink" target="_blank" rel="noopener"><span class="action-mini__icon"><i class="fa-solid fa-location-dot"></i></span><span class="action-mini__label">Localização</span></a>
+        <a class="action-mini action-mini--reviews" id="reviewsLink" target="_blank" rel="noopener"><span class="action-mini__icon"><i class="fa-solid fa-star"></i></span><span class="action-mini__label">Avaliações</span></a>
       </div>
     </section>
-
-    <!-- 8. CTA FINAL -->
     <section class="section reveal" data-d="9" id="horarios">
-      <a class="cta-final" id="ctaFinal" href="#" target="_blank" rel="noopener">
-        <i class="fa-solid fa-gauge-high"></i>
-        <span>Agendar Diagnóstico</span>
-      </a>
+      <a class="cta-final" id="ctaFinal" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-gauge-high"></i><span>Agendar Diagnóstico</span></a>
     </section>
-
-    <!-- 9. RODAPÉ — Salvar + sociais -->
     <footer class="footer-row reveal" data-d="10">
-      <button class="save-btn" id="saveBtn" type="button">
-        <i class="fa-solid fa-address-card"></i>
-        <span>Salvar Contato</span>
-      </button>
+      <button class="save-btn" id="saveBtn" type="button"><i class="fa-solid fa-address-card"></i><span>Salvar Contato</span></button>
       <nav class="socials" aria-label="Redes sociais">
         <a class="social" id="igLink" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
         <a class="social" id="fbLink" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
@@ -387,202 +188,29 @@
       <p class="footer__copy">© <span id="year">2026</span> <b id="brandCopy">TurboMax Performance</b> · Preparador Automotivo</p>
     </footer>
   </main>
-
-  <!-- 10. BARRA STICKY (mobile) -->
-  <div class="sticky-bar">
-    <a class="sticky-bar__btn" id="stickyBtn" href="#" target="_blank" rel="noopener">
-      <i class="fa-solid fa-gauge-high"></i>
-      <span>Agendar</span>
-    </a>
-  </div>
-
+  <div class="sticky-bar"><a class="sticky-bar__btn" id="stickyBtn" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-gauge-high"></i><span>Agendar</span></a></div>
   <script>
-    /* ============================================================
-       CONFIGURAÇÃO — edite tudo aqui
-    ============================================================ */
-    const PERFIL = {
-      nome:        "TurboMax Performance",
-      cargo:       "Preparação · Performance · Alta Potência",
-      bio:         "Extraímos o máximo do seu motor. Preparação, escape e suspensão esportiva. 🏁",
-      whatsapp:    "5511966664444",
-      telefone:    "+55 (11) 96666-4444",
-      email:       "contato@turbomax.com.br",
-      site:        "https://turbomax.com.br",
-      wazeLatLng:  "-23.5400,-46.6700",
-      instagram:   "https://instagram.com/turbomax",
-      facebook:    "https://facebook.com/turbomax",
-      googleReviews: "https://g.page/turbomax/review",
-      rating:      5.0,
-      numClientes: 1800,
-      antecedencia:"Agende seu diagnóstico de performance",
-      logistica:   "Dinamômetro próprio · Preparação sob encomenda · Garantia de 6 meses · Agende com 48h",
-      selo:        "Especialistas em preparação",
-      org:         "TurboMax Performance Automotiva",
-      title:       "Preparador Automotivo",
-      horarios: {
-        0: null,
-        1:{ab:900,fe:1800}, 2:{ab:900,fe:1800}, 3:{ab:900,fe:1800},
-        4:{ab:900,fe:1800}, 5:{ab:900,fe:1800}, 6:{ab:900,fe:1400}
-      },
-      hero: {
-        nome:    "Kit Preparação Motor + Remapeamento",
-        sub:     "Preparação e performance de verdade para seu carro.",
-        preco:   "Sob orçamento",
-        img:     "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=500&fit=crop&q=80&auto=format",
-        escassez:"Edição limitada"
-      },
-      imgFundo:  "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=80&auto=format",
-      imgPerfil: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c8?w=320&h=320&fit=crop&q=80&auto=format",
-      SERVICOS: [
-        { nome:"Remapeamento (Reflash/Chip)", preco:"A partir de R$ 899",
-          desc:"Reflash centralina · ganho até 15cv · 1 dia",
-          img:"https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=500&fit=crop&q=80&auto=format" },
-        { nome:"Sistema de Escape Esportivo",  preco:"A partir de R$ 1290",
-          desc:"Linha inox 304 · som esportivo · instalado em 4h",
-          img:"https://images.unsplash.com/photo-1552519507-da3b142986ed?w=800&h=500&fit=crop&q=80&auto=format" },
-        { nome:"Suspensão Esportiva",          preco:"Sob orçamento",
-          desc:"Kit molas + amortecedores · baixa até 40mm · 1 dia",
-          img:"https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=800&h=500&fit=crop&q=80&auto=format" },
-        { nome:"Diagnóstico Dinâmico (Banco)", preco:"A partir de R$ 249",
-          desc:"Leitura dinâmica · laudo em 30min · banco de provas",
-          img:"https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&h=500&fit=crop&q=80&auto=format" }
-      ],
-      depoimento: {
-        texto:"Prepararam meu carro e ficou outro! Resposta imediata, acabamento impecável e atendimento de quem entende do riscado. Top demais!",
-        nome:"Felipe Tanaka"
-      }
-    };
-
-    /* ============================================================
-       HELPERS
-    ============================================================ */
-    const $ = (id) => document.getElementById(id);
-    const initials = PERFIL.nome.replace(/&/g, "E").split(/\s+/)
-      .filter(Boolean).slice(0, 2)
-      .map(p => p[0]).join("").toUpperCase();
-
-    function waServico(nome){
-      return "https://wa.me/"+PERFIL.whatsapp+"?text="+encodeURIComponent("Olá! Quero agendar: "+nome+" 🏁");
-    }
-    function waGenerico(){
-      return "https://wa.me/"+PERFIL.whatsapp+"?text="+encodeURIComponent("Olá "+PERFIL.nome+"! Vim pelo cartão digital e gostaria de agendar. 🏁");
-    }
-
-    /* ============================================================
-       PREENCHER UI
-    ============================================================ */
-    $("name").textContent      = PERFIL.nome;
-    $("role").textContent      = PERFIL.cargo;
-    $("initials").textContent  = initials;
-    $("brandCopy").textContent = PERFIL.nome;
-    $("year").textContent      = new Date().getFullYear();
-
-    $("rating").textContent      = PERFIL.rating.toLocaleString("pt-BR", { minimumFractionDigits: 1 });
-    $("numClientes").textContent = "+" + PERFIL.numClientes.toLocaleString("pt-BR") + " carros preparados";
-    $("selo").textContent        = PERFIL.selo;
-
-    $("heroTitle").textContent  = PERFIL.hero.nome;
-    $("heroPrice").textContent  = PERFIL.hero.preco;
-    $("heroBadge").textContent  = PERFIL.hero.escassez;
-    $("heroSub").textContent    = PERFIL.hero.sub || "Preparação e performance de verdade para seu carro.";
-    $("heroMedia").style.backgroundImage = `url("${PERFIL.hero.img}")`;
-    $("heroCta").href           = waServico(PERFIL.hero.nome);
-
-    $("advanceNote").innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + PERFIL.antecedencia;
-    $("stepsNote").innerHTML   = '<i class="fa-solid fa-gauge-high"></i><span>' + PERFIL.logistica + '</span>';
-
-    $("testimonialText").textContent   = "“" + PERFIL.depoimento.texto + "”";
-    $("testimonialAuthor").textContent = "— " + PERFIL.depoimento.nome;
-
-    $("waLink").href      = waGenerico();
-    $("wazeLink").href    = "https://waze.com/ul?ll=" + encodeURIComponent(PERFIL.wazeLatLng) + "&navigate=yes";
-    $("reviewsLink").href = PERFIL.googleReviews;
-
-    $("ctaFinal").href  = waGenerico();
-    $("stickyBtn").href = waServico(PERFIL.hero.nome);
-
-    $("igLink").href   = PERFIL.instagram;
-    $("fbLink").href   = PERFIL.facebook;
-    $("siteLink").href = PERFIL.site;
-
-    /* ============================================================
-       RENDER SERVIÇOS
-    ============================================================ */
-    function renderServicos(){
-      const grid = $("servGrid");
-      const fb = "linear-gradient(135deg,#1a0606,#3a0a0a)";
-      grid.innerHTML = PERFIL.SERVICOS.map((s)=>`
-        <article class="serv">
-          <div class="serv__thumb" style="background-image:url('${s.img}');"
-               onerror="this.style.backgroundImage='${fb}';this.onerror=null;"></div>
-          <div class="serv__body">
-            <span class="serv__name">${s.nome}</span>
-            ${s.desc ? `<span class="serv__desc">${s.desc}</span>` : ""}
-            <span class="serv__price">${s.preco}</span>
-            <a class="serv__cta" href="${waServico(s.nome)}" target="_blank" rel="noopener">
-              <i class="fa-brands fa-whatsapp"></i> Agendar
-            </a>
-          </div>
-        </article>`).join("");
-      grid.querySelectorAll(".serv__thumb").forEach((el)=>{
-        const url = el.style.backgroundImage.slice(5,-2).replace(/['"]/g,"");
-        if(url){ const p=new Image(); p.onerror=()=>{el.style.backgroundImage=fb;}; p.src=url; }
-      });
-    }
+    const PERFIL={nome:"TurboMax Performance",cargo:"Preparação · Performance · Alta Potência",bio:"Extraímos o máximo do seu motor. Preparação, escape e suspensão esportiva. 🏁",whatsapp:"5511966664444",telefone:"+55 (11) 96666-4444",email:"contato@turbomax.com.br",site:"https://turbomax.com.br",wazeLatLng:"-23.5400,-46.6700",instagram:"https://instagram.com/turbomax",facebook:"https://facebook.com/turbomax",googleReviews:"https://g.page/turbomax/review",rating:5.0,numClientes:1800,antecedencia:"Agende seu diagnóstico de performance",logistica:"Dyno próprio · Encomenda · Garantia 6 meses · Agende com 48h",selo:"Especialistas em preparação",org:"TurboMax Performance Automotiva",title:"Preparador Automotivo",horarios:{0:null,1:{ab:900,fe:1800},2:{ab:900,fe:1800},3:{ab:900,fe:1800},4:{ab:900,fe:1800},5:{ab:900,fe:1800},6:{ab:900,fe:1400}},hero:{nome:"Kit Preparação Motor + Remapeamento",sub:"Potência, torque e resposta de verdade no acelerador.",preco:"Sob orçamento",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=500&fit=crop&q=80&auto=format",escassez:"Dyno test incluso"},imgFundo:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=80&auto=format",imgPerfil:"https://images.unsplash.com/photo-1605559424843-9e4c228bf1c8?w=320&h=320&fit=crop&q=80&auto=format",SERVICOS:[{nome:"Remapeamento (Reflash/Chip)",preco:"A partir de R$ 899",desc:"Mais potência e torque no acelerador.",img:"https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=500&fit=crop&q=80&auto=format"},{nome:"Sistema de Escape Esportivo",preco:"A partir de R$ 1290",desc:"Inox 304 com som esportivo e fluxo livre.",img:"https://images.unsplash.com/photo-1552519507-da3b142986ed?w=800&h=500&fit=crop&q=80&auto=format"},{nome:"Suspensão Esportiva",preco:"Sob orçamento",desc:"Rebaixa até 40mm e firmeza na curva.",img:"https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=800&h=500&fit=crop&q=80&auto=format"},{nome:"Diagnóstico Dinâmico (Banco)",preco:"A partir de R$ 249",desc:"Leitura no banco com laudo em 30min.",img:"https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&h=500&fit=crop&q=80&auto=format"}],depoimento:{texto:"Reflash + escape: ganhei 18cv e o carro ficou outro.",nome:"Felipe Tanaka"}};
+    const $=(id)=>document.getElementById(id);
+    const initials=PERFIL.nome.replace(/&/g,"E").split(/\s+/).filter(Boolean).slice(0,2).map(p=>p[0]).join("").toUpperCase();
+    function waServico(nome){return "https://wa.me/"+PERFIL.whatsapp+"?text="+encodeURIComponent("Olá! Quero agendar: "+nome+" 🏁")}
+    function waGenerico(){return "https://wa.me/"+PERFIL.whatsapp+"?text="+encodeURIComponent("Olá "+PERFIL.nome+"! Vim pelo cartão digital e gostaria de agendar. 🏁")}
+    $("name").textContent=PERFIL.nome;$("role").textContent=PERFIL.cargo;$("initials").textContent=initials;$("brandCopy").textContent=PERFIL.nome;$("year").textContent=new Date().getFullYear();
+    $("rating").textContent=PERFIL.rating.toLocaleString("pt-BR",{minimumFractionDigits:1});$("numClientes").textContent="+"+PERFIL.numClientes.toLocaleString("pt-BR")+" carros preparados";$("selo").textContent=PERFIL.selo;
+    $("heroTitle").textContent=PERFIL.hero.nome;$("heroPrice").textContent=PERFIL.hero.preco;$("heroBadge").textContent=PERFIL.hero.escassez;$("heroSub").textContent=PERFIL.hero.sub||"Preparação e performance de verdade para seu carro.";$("heroMedia").style.backgroundImage=`url("${PERFIL.hero.img}")`;$("heroCta").href=waServico(PERFIL.hero.nome);
+    $("advanceNote").innerHTML='<i class="fa-solid fa-circle-check"></i> '+PERFIL.antecedencia;$("stepsNote").innerHTML='<i class="fa-solid fa-gauge-high"></i><span>'+PERFIL.logistica+'</span>';
+    $("testimonialText").textContent="“"+PERFIL.depoimento.texto+"”";$("testimonialAuthor").textContent="— "+PERFIL.depoimento.nome;
+    $("waLink").href=waGenerico();$("wazeLink").href="https://waze.com/ul?ll="+encodeURIComponent(PERFIL.wazeLatLng)+"&navigate=yes";$("reviewsLink").href=PERFIL.googleReviews;
+    $("ctaFinal").href=waGenerico();$("stickyBtn").href=waServico(PERFIL.hero.nome);
+    $("igLink").href=PERFIL.instagram;$("fbLink").href=PERFIL.facebook;$("siteLink").href=PERFIL.site;
+    function renderServicos(){const grid=$("servGrid");const fb="linear-gradient(135deg,#1a0606,#3a0a0a)";grid.innerHTML=PERFIL.SERVICOS.map((s)=>`<article class="serv"><div class="serv__thumb" style="background-image:url('${s.img}');" onerror="this.style.backgroundImage='${fb}';this.onerror=null;"></div><div class="serv__body"><span class="serv__name">${s.nome}</span>${s.desc?`<span class="serv__desc">${s.desc}</span>`:""}<span class="serv__price">${s.preco}</span><a class="serv__cta" href="${waServico(s.nome)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Agendar</a></div></article>`).join("");grid.querySelectorAll(".serv__thumb").forEach((el)=>{const url=el.style.backgroundImage.slice(5,-2).replace(/['"]/g,"");if(url){const p=new Image();p.onerror=()=>{el.style.backgroundImage=fb};p.src=url}})}
     renderServicos();
-
-    /* ============================================================
-       STATUS ABERTO/FECHADO
-    ============================================================ */
-    function atualizarStatus(){
-      const agora=new Date(), dia=agora.getDay();
-      const hhmm=agora.getHours()*100+agora.getMinutes();
-      const h=PERFIL.horarios[dia];
-      const pill=$("statusPill"), txt=$("statusText");
-      if(h && hhmm>=h.ab && hhmm<h.fe){ pill.classList.add("pill--open"); pill.classList.remove("pill--closed"); txt.textContent="Aberto agora ✓"; }
-      else { pill.classList.add("pill--closed"); pill.classList.remove("pill--open"); txt.textContent="Fechado"; }
-    }
-    atualizarStatus();
-    setInterval(atualizarStatus, 5*60*1000);
-
-    /* ============================================================
-       IMAGEM DE FUNDO (probe + fallback)
-    ============================================================ */
-    const bg = $("bgImg");
-    bg.style.backgroundImage = `url("${PERFIL.imgFundo}")`;
-    const bgProbe = new Image();
-    bgProbe.onload = () => bg.classList.add("is-loaded");
-    bgProbe.src = PERFIL.imgFundo;
-
-    /* ============================================================
-       AVATAR (fallback iniciais)
-    ============================================================ */
-    const avatarWrap = $("avatar");
-    const avatarImg  = $("avatarImg");
-    avatarImg.onerror = () => avatarWrap.classList.add("no-img");
-    avatarImg.src = PERFIL.imgPerfil;
-
-    /* ============================================================
-       vCard REAL — gera e baixa contato.vcf
-    ============================================================ */
-    const nomeParts=PERFIL.nome.split(" ");
-    const vcard=["BEGIN:VCARD","VERSION:3.0",
-      `N:${nomeParts.slice(-1)};${nomeParts.slice(0,-1).join(" ")};;;`,
-      `FN:${PERFIL.nome}`,`ORG:${PERFIL.org}`,`TITLE:${PERFIL.title}`,
-      `TEL;TYPE=CELL:${PERFIL.telefone}`,`EMAIL:${PERFIL.email}`,
-      `URL:${PERFIL.site}`,`NOTE:${PERFIL.bio}`,"END:VCARD"].join("\r\n");
-
-    $("saveBtn").addEventListener("click", () => {
-      const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement("a");
-      a.href = url;
-      a.download = "contato.vcf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
-    });
+    function atualizarStatus(){const agora=new Date(),dia=agora.getDay();const hhmm=agora.getHours()*100+agora.getMinutes();const h=PERFIL.horarios[dia];const pill=$("statusPill"),txt=$("statusText");if(h&&hhmm>=h.ab&&hhmm<h.fe){pill.classList.add("pill--open");pill.classList.remove("pill--closed");txt.textContent="Aberto agora ✓"}else{pill.classList.add("pill--closed");pill.classList.remove("pill--open");txt.textContent="Fechado"}}
+    atualizarStatus();setInterval(atualizarStatus,5*60*1000);
+    const bg=$("bgImg");bg.style.backgroundImage=`url("${PERFIL.imgFundo}")`;const bgProbe=new Image();bgProbe.onload=()=>bg.classList.add("is-loaded");bgProbe.src=PERFIL.imgFundo;
+    const avatarWrap=$("avatar"),avatarImg=$("avatarImg");avatarImg.onerror=()=>avatarWrap.classList.add("no-img");avatarImg.src=PERFIL.imgPerfil;
+    const nomeParts=PERFIL.nome.split(" ");const vcard=["BEGIN:VCARD","VERSION:3.0",`N:${nomeParts.slice(-1)};${nomeParts.slice(0,-1).join(" ")};;;`,`FN:${PERFIL.nome}`,`ORG:${PERFIL.org}`,`TITLE:${PERFIL.title}`,`TEL;TYPE=CELL:${PERFIL.telefone}`,`EMAIL:${PERFIL.email}`,`URL:${PERFIL.site}`,`NOTE:${PERFIL.bio}`,"END:VCARD"].join("\r\n");
+    $("saveBtn").addEventListener("click",()=>{const blob=new Blob([vcard],{type:"text/vcard;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="contato.vcf";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)});
   </script>
 </body>
 </html>
